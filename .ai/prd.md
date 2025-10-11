@@ -7,7 +7,7 @@ Manualne tworzenie wysokiej jakości fiszek jest czasochłonne i wymaga dużego 
 
 ## 3. Wymagania funkcjonalne
 - Generowanie fiszek przez AI na podstawie wklejonego tekstu (2000–10 000 znaków)
-- Oczyszczanie i walidacja tekstu wejściowego przed wysłaniem do API AI
+- Oczyszczanie ze zbędnych pustych znaków i walidacja tekstu wejściowego pod kątem bezpieczeństwa przed wysłaniem do API AI
 - Recenzja propozycji fiszek: akceptacja, edycja inline (przód do 200 znaków, tył do 500 znaków) lub odrzucenie
 - Zapis zaakceptowanych fiszek jako nowa talia z automatycznie wygenerowaną nazwą bazującą na dacie i czasie
 - Ręczne tworzenie fiszek: sesja tworzenia nowej talii, wpisywanie front/back
