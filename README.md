@@ -1,53 +1,75 @@
-# 10x Astro Starter
+# 10xdevsFishcards
 
-A modern, opinionated starter template for building fast, accessible, and AI-friendly web applications.
+A flashcard application designed for developers to learn and memorize programming concepts, prepare for technical interviews, and enhance their knowledge.
+
+## Table of Contents
+
+- [Tech Stack](#tech-stack)
+- [Getting Started Locally](#getting-started-locally)
+- [Available Scripts](#available-scripts)
+- [Project Structure](#project-structure)
+- [Project Scope](#project-scope)
+- [Project Status](#project-status)
+- [License](#license)
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v5.5.5 - Modern web framework for building fast, content-focused websites
-- [React](https://react.dev/) v19.0.0 - UI library for building interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4.0.17 - Utility-first CSS framework
+- **Framework**: [Astro](https://astro.build/)
+- **UI**: [React](https://react.dev/), [Shadcn/ui](https://ui.shadcn.com/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Backend**: [Supabase](https://supabase.io/)
 
-## Prerequisites
+## Getting Started Locally
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+To get a local copy up and running, follow these simple steps.
 
-## Getting Started
+### Prerequisites
 
-1. Clone the repository:
+Make sure you have Node.js installed. The required version is specified in the `.nvmrc` file. It's recommended to use a Node Version Manager like `nvm`.
 
-```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
+- Install `nvm` by following the instructions [here](https://github.com/nvm-sh/nvm#installing-and-updating).
+- Use `nvm` to install and use the correct Node.js version:
+  ```sh
+  nvm install
+  nvm use
+  ```
 
-2. Install dependencies:
+### Installation
 
-```bash
-npm install
-```
+1.  Clone the repo
+    ```sh
+    git clone https://github.com/your_username/10xdevsFishcards.git
+    ```
+2.  Install NPM packages
+    ```sh
+    npm install
+    ```
+3.  Set up your environment variables by creating a `.env` file in the root of the project. You can copy the example file:
+    ```sh
+    cp .env.example .env
+    ```
+    Then, fill in the required values for your Supabase project.
 
-3. Run the development server:
+### Running the Application
 
-```bash
+To start the development server, run:
+
+```sh
 npm run dev
 ```
 
-4. Build for production:
-
-```bash
-npm run build
-```
+The application will be available at `http://localhost:4321`.
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
+In the project directory, you can run the following scripts:
+
+- `npm run dev`: Runs the app in the development mode.
+- `npm run start`: Starts the app in production mode after building.
+- `npm run build`: Builds the app for production to the `dist/` folder.
+- `npm run preview`: Serves the production build locally for preview.
+- `npm run astro`: Provides access to the Astro CLI.
 
 ## Project Structure
 
@@ -62,33 +84,25 @@ npm run build
 ├── public/         # Public assets
 ```
 
-## AI Development Support
+## Project Scope
 
-This project is configured with AI development tools to enhance the development experience, providing guidelines for:
+The current scope of the project includes the following features:
 
-- Project structure
-- Coding practices
-- Frontend development
-- Styling with Tailwind
-- Accessibility best practices
-- Astro and React guidelines
+- **User Authentication**: Secure user registration and login.
+- **Flashcard Decks**:
+  - Browse existing decks.
+  - Create, edit, and delete personal decks.
+- **Learning Mode**:
+  - View flashcards one by one.
+  - Mark cards as "learned" to track progress.
 
-### Cursor IDE
+## Project Status
 
-The project includes AI rules in `.cursor/rules/` directory that help Cursor IDE understand the project structure and provide better code suggestions.
+[![Project Status: In Development](https://img.shields.io/badge/status-in_development-yellowgreen.svg)](https://github.com/your_username/10xdevsFishcards)
 
-### GitHub Copilot
-
-AI instructions for GitHub Copilot are available in `.github/copilot-instructions.md`
-
-### Windsurf
-
-The `.windsurfrules` file contains AI configuration for Windsurf.
-
-## Contributing
-
-Please follow the AI guidelines and coding practices defined in the AI configuration files when contributing to this project.
+This project is currently in the development phase. New features and improvements are being actively worked on.
 
 ## License
 
-MIT
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
+
