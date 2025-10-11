@@ -1,6 +1,6 @@
-# Dokument wymagań produktu (PRD) - AiFishcards
+# Dokument wymagań produktu (PRD) - 10xdevsFishcards
 ## 1. Przegląd produktu
-AiFishcards to aplikacja webowa umożliwiająca automatyzację tworzenia fiszek edukacyjnych przy użyciu sztucznej inteligencji. Użytkownik wkleja tekst źródłowy, otrzymuje wygenerowane propozycje fiszek, recenzuje je i zapisuje jako nową talię. Dodatkowo dostępne jest ręczne tworzenie fiszek oraz prosty moduł nauki oparty na algorytmie SM-2. System uwierzytelniania i przechowywania danych oparto na Supabase.
+10xdevsFishcards to aplikacja webowa umożliwiająca automatyzację tworzenia fiszek edukacyjnych przy użyciu sztucznej inteligencji. Użytkownik wkleja tekst źródłowy, otrzymuje wygenerowane propozycje fiszek, recenzuje je i zapisuje jako nową talię. Dodatkowo dostępne jest ręczne tworzenie fiszek oraz prosty moduł nauki oparty na algorytmie SM-2. System uwierzytelniania i przechowywania danych oparto na Supabase.
 
 ## 2. Problem użytkownika
 Manualne tworzenie wysokiej jakości fiszek jest czasochłonne i wymaga dużego nakładu pracy, co obniża motywację do korzystania z metody spaced repetition. Użytkownicy potrzebują szybkiego, prostego narzędzia, które zautomatyzuje ten proces i umożliwi skupienie się na nauce.
