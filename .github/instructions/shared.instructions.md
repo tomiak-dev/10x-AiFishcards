@@ -3,7 +3,7 @@ description:
 applyTo: 
 alwaysApply: true
 ---
-# AI Rules for {app-name}
+# AI Rules for 10xdevsFishCards
 
 {project-description}
 
