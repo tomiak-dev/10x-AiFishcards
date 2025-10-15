@@ -60,6 +60,12 @@ export const ListDecksQuerySchema = z.object({
   order: z.enum(["asc", "desc"]).optional().default("desc"),
 });
 
+/**
+ * Schema for validating deck ID parameter
+ * Used in: GET /api/decks/{deckId}, PATCH /api/decks/{deckId}, DELETE /api/decks/{deckId}
+ */
+export const DeckIdSchema = z.string().uuid("Deck ID must be a valid UUID");
+
 export type CreateDeckDTO = z.infer<typeof CreateDeckSchema>;
 export type FlashcardInputDTO = z.infer<typeof FlashcardInputSchema>;
 export type AiSaveRequestDTO = z.infer<typeof AiSaveRequestSchema>;

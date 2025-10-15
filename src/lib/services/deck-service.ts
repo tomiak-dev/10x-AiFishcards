@@ -6,6 +6,7 @@ import type {
   AISaveResponseDTO,
   ListDecksResponse,
   DeckSummaryDTO,
+  DeckDetailsDTO,
 } from "../../types";
 
 /**
@@ -184,6 +185,56 @@ export class DeckService {
         totalPages,
         totalItems,
       },
+    };
+  }
+
+  /**
+   * Retrieves detailed information about a specific deck including all flashcards
+   * @param deckId - UUID of the deck to retrieve
+   * @returns Deck details with flashcards or null if not found
+   * @throws Error if database query fails
+   */
+  async getDeckDetails(deckId: string): Promise<DeckDetailsDTO | null> {
+    // Fetch deck with nested flashcards in a single query
+    // RLS policies automatically filter by user_id
+    const { data: deck, error } = await this.supabase
+      .from("decks")
+      .select(
+        `
+        id,
+        name,
+        created_at,
+        last_reviewed_at,
+        flashcards (
+          id,
+          front,
+          back,
+          created_at
+        )
+      `
+      )
+      .eq("id", deckId)
+      .single();
+
+    if (error) {
+      // If error is 'PGRST116', it means no rows returned (not found)
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw new Error(`Failed to fetch deck details: ${error.message}`);
+    }
+
+    if (!deck) {
+      return null;
+    }
+
+    // Transform the data to match DeckDetailsDTO type
+    return {
+      id: deck.id,
+      name: deck.name,
+      created_at: deck.created_at,
+      last_reviewed_at: deck.last_reviewed_at,
+      flashcards: deck.flashcards ?? [],
     };
   }
 }
