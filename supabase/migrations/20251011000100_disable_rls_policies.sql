@@ -88,6 +88,25 @@ drop policy if exists "ai_generation_metrics_update_policy_for_authenticated" on
 drop policy if exists "ai_generation_metrics_delete_policy_for_authenticated" on ai_generation_metrics;
 
 -- ============================================================================
+-- STEP 6: Disable RLS on all tables
+-- ============================================================================
+
+-- Disable RLS on srs_algorithms table
+alter table srs_algorithms disable row level security;
+
+-- Disable RLS on decks table
+alter table decks disable row level security;
+
+-- Disable RLS on flashcards table
+alter table flashcards disable row level security;
+
+-- Disable RLS on flashcard_srs_data table
+alter table flashcard_srs_data disable row level security;
+
+-- Disable RLS on ai_generation_metrics table
+alter table ai_generation_metrics disable row level security;
+
+-- ============================================================================
 -- Migration Complete
 -- ============================================================================
 -- All RLS policies have been dropped from:
@@ -98,10 +117,4 @@ drop policy if exists "ai_generation_metrics_delete_policy_for_authenticated" on
 -- - ai_generation_metrics (4 policies dropped)
 -- Total: 18 policies dropped
 --
--- IMPORTANT: Row Level Security (RLS) is still ENABLED on all tables.
--- This means that without policies, no rows will be accessible to users
--- unless you either:
--- 1. Create new policies, or
--- 2. Disable RLS entirely with: ALTER TABLE table_name DISABLE ROW LEVEL SECURITY
--- ============================================================================
-
+-- Row Level Security (RLS) has been DISABLED on all tables.
