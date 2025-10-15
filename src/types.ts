@@ -122,7 +122,7 @@ export type FlashcardProposalDTO = {
  * Response for listing decks with pagination
  * Used in: GET /api/decks
  */
-export type DeckListDTO = {
+export type ListDecksResponse = {
   data: DeckSummaryDTO[];
   pagination: PaginationDTO;
 };

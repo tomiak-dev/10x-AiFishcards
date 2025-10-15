@@ -1,5 +1,12 @@
 import type { SupabaseClient } from "../../db/supabase.client";
-import type { CreateDeckCommand, DeckCreatedDTO, SaveAIFlashcardsCommand, AISaveResponseDTO } from "../../types";
+import type {
+  CreateDeckCommand,
+  DeckCreatedDTO,
+  SaveAIFlashcardsCommand,
+  AISaveResponseDTO,
+  ListDecksResponse,
+  DeckSummaryDTO,
+} from "../../types";
 
 /**
  * Service for managing deck operations
@@ -123,6 +130,60 @@ export class DeckService {
       id: deck.id,
       name: deck.name,
       created_at: deck.created_at,
+    };
+  }
+
+  /**
+   * Retrieves a paginated list of decks for the current user
+   * @param params - Query parameters for pagination and sorting
+   * @param params.page - Page number (1-based)
+   * @param params.limit - Items per page (max 100)
+   * @param params.sortBy - Field to sort by
+   * @param params.order - Sort order (asc/desc)
+   * @returns Paginated list of decks with metadata
+   * @throws Error if database query fails
+   */
+  async listDecks(params: {
+    page: number;
+    limit: number;
+    sortBy: "name" | "created_at" | "last_reviewed_at";
+    order: "asc" | "desc";
+  }): Promise<ListDecksResponse> {
+    const { page, limit, sortBy, order } = params;
+
+    // Calculate range for pagination (Supabase uses 0-based indexing)
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
+    // Fetch paginated decks with sorting
+    // RLS policies automatically filter by user_id
+    const { data: decks, error: decksError } = await this.supabase
+      .from("decks")
+      .select("id, name, created_at, last_reviewed_at")
+      .order(sortBy, { ascending: order === "asc" })
+      .range(from, to);
+
+    if (decksError) {
+      throw new Error(`Failed to fetch decks: ${decksError.message}`);
+    }
+
+    // Fetch total count for pagination metadata
+    const { count, error: countError } = await this.supabase.from("decks").select("*", { count: "exact", head: true });
+
+    if (countError) {
+      throw new Error(`Failed to count decks: ${countError.message}`);
+    }
+
+    const totalItems = count ?? 0;
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+      data: (decks as DeckSummaryDTO[]) ?? [],
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems,
+      },
     };
   }
 }

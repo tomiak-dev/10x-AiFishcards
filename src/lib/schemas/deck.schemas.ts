@@ -39,7 +39,29 @@ export const AiSaveRequestSchema = z.object({
   metrics: AiMetricsSchema,
 });
 
+/**
+ * Schema for validating list decks query parameters
+ * Used in: GET /api/decks
+ */
+export const ListDecksQuerySchema = z.object({
+  page: z
+    .string()
+    .optional()
+    .default("1")
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().min(1, "Page must be at least 1")),
+  limit: z
+    .string()
+    .optional()
+    .default("10")
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().min(1, "Limit must be at least 1").max(100, "Limit cannot exceed 100")),
+  sortBy: z.enum(["name", "created_at", "last_reviewed_at"]).optional().default("created_at"),
+  order: z.enum(["asc", "desc"]).optional().default("desc"),
+});
+
 export type CreateDeckDTO = z.infer<typeof CreateDeckSchema>;
 export type FlashcardInputDTO = z.infer<typeof FlashcardInputSchema>;
 export type AiSaveRequestDTO = z.infer<typeof AiSaveRequestSchema>;
 export type AiMetricsDTO = z.infer<typeof AiMetricsSchema>;
+export type ListDecksQueryDTO = z.infer<typeof ListDecksQuerySchema>;

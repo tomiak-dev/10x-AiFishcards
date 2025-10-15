@@ -1,17 +1,23 @@
 import type { APIRoute } from "astro";
-import { CreateDeckSchema } from "../../../lib/schemas/deck.schemas";
 import { DeckService } from "../../../lib/services/deck-service";
+import { ListDecksQuerySchema } from "../../../lib/schemas/deck.schemas";
 import { ZodError } from "zod";
 
 export const prerender = false;
 
 /**
- * POST /api/decks
- * Creates a new deck with initial flashcards
+ * GET /api/decks
+ * Retrieves a paginated list of decks for the authenticated user
+ *
+ * Query Parameters:
+ * - page: Page number (default: 1)
+ * - limit: Items per page (default: 10, max: 100)
+ * - sortBy: Field to sort by (default: "created_at")
+ * - order: Sort order "asc" or "desc" (default: "desc")
  */
-export const POST: APIRoute = async ({ request, locals }) => {
+export const GET: APIRoute = async ({ locals, url }) => {
   try {
-    // Check if user is authenticated (via middleware)
+    // Check authentication
     if (!locals.userId) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
@@ -19,47 +25,50 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    // Parse and validate request body
-    const body = await request.json();
-    const validatedData = CreateDeckSchema.parse(body);
+    // Extract and validate query parameters
+    const queryParams = {
+      page: url.searchParams.get("page") ?? undefined,
+      limit: url.searchParams.get("limit") ?? undefined,
+      sortBy: url.searchParams.get("sortBy") ?? undefined,
+      order: url.searchParams.get("order") ?? undefined,
+    };
 
-    // Create deck with flashcards
+    let validatedParams;
+    try {
+      validatedParams = ListDecksQuerySchema.parse(queryParams);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return new Response(
+          JSON.stringify({
+            error: "Invalid query parameters",
+            details: error.errors.map((e) => ({
+              field: e.path.join("."),
+              message: e.message,
+            })),
+          }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      throw error;
+    }
+
+    // Initialize service and fetch decks
     const deckService = new DeckService(locals.supabase);
-    const createdDeck = await deckService.createDeck(validatedData, locals.userId);
+    const response = await deckService.listDecks(validatedParams);
 
-    return new Response(JSON.stringify(createdDeck), {
-      status: 201,
+    return new Response(JSON.stringify(response), {
+      status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    // Handle validation errors
-    if (error instanceof ZodError) {
-      return new Response(
-        JSON.stringify({
-          error: "Validation failed",
-          details: error.errors.map((err) => ({
-            field: err.path.join("."),
-            message: err.message,
-          })),
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
+    console.error("Error listing decks:", error);
 
-    // Handle other errors
-    console.error("Error creating deck:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",
         message: error instanceof Error ? error.message : "Unknown error",
       }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 };
