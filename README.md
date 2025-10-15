@@ -8,6 +8,7 @@ A flashcard application designed for developers to learn and memorize programmin
 - [Getting Started Locally](#getting-started-locally)
 - [Available Scripts](#available-scripts)
 - [Project Structure](#project-structure)
+- [Testing](#testing)
 - [Project Scope](#project-scope)
 - [Project Status](#project-status)
 - [License](#license)
@@ -70,19 +71,86 @@ In the project directory, you can run the following scripts:
 - `npm run build`: Builds the app for production to the `dist/` folder.
 - `npm run preview`: Serves the production build locally for preview.
 - `npm run astro`: Provides access to the Astro CLI.
+- `npm run lint`: Lints the codebase.
+- `npm run lint:fix`: Lints and auto-fixes issues.
+- `npm run format`: Formats the code with Prettier.
 
 ## Project Structure
 
 ```md
 .
+├── .ai/                    # Implementation plans and API documentation
 ├── src/
-│   ├── layouts/    # Astro layouts
-│   ├── pages/      # Astro pages
-│   │   └── api/    # API endpoints
-│   ├── components/ # UI components (Astro & React)
-│   └── assets/     # Static assets
-├── public/         # Public assets
+│   ├── layouts/            # Astro layouts
+│   ├── pages/              # Astro pages
+│   │   └── api/            # API endpoints
+│   ├── components/         # UI components (Astro & React)
+│   │   └── ui/             # Shadcn/ui components
+│   ├── lib/                # Services and utilities
+│   │   └── services/       # Business logic services
+│   ├── middleware/         # Astro middleware
+│   ├── db/                 # Supabase client and types
+│   ├── types.ts            # Shared TypeScript types
+│   └── assets/             # Static internal assets
+├── public/                 # Public assets
+└── supabase/               # Supabase migrations and config
 ```
+
+## Testing
+
+### Manual API Testing
+
+The project includes bash scripts for manual testing of API endpoints.
+
+#### Prerequisites
+
+1. Start the development server:
+   ```sh
+   npm run dev
+   ```
+
+#### Running Tests
+
+2. In a new terminal, run the test script:
+   ```sh
+   test-ai-generate.sh
+   ```
+
+This script tests the `POST /api/ai/generate` endpoint with various scenarios:
+- ✅ Valid requests with correct text length (2000+ characters)
+- ❌ Text too short (< 2000 characters) - expects 400
+- ❌ Text too long (> 10000 characters) - expects 400
+- ❌ Missing text field - expects 400
+- ❌ Invalid JSON - expects 400
+- ✅ Requests without authentication (uses default user in dev mode)
+
+#### Manual Testing with curl
+
+You can also test endpoints manually:
+
+```sh
+# Basic request (development mode - no auth required)
+curl -X POST http://localhost:4321/api/ai/generate \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Your text here (minimum 2000 characters)..."}'
+
+# With JWT token (production)
+curl -X POST http://localhost:4321/api/ai/generate \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{"text":"..."}'
+```
+
+#### Development Mode
+
+In development, API endpoints use a default test user UUID (`DEFAULT_USER_UUID`) when no JWT token is provided. This allows easy testing without authentication.
+
+**⚠️ IMPORTANT**: This fallback must be disabled in production!
+
+### API Documentation
+
+Detailed API documentation for each endpoint can be found in the `.ai/` directory:
+- `.ai/api-ai-generate.md` - Documentation for the AI flashcard generation endpoint
 
 ## Project Scope
 
@@ -105,4 +173,3 @@ This project is currently in the development phase. New features and improvement
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for more details.
-
