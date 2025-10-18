@@ -1,8 +1,8 @@
 ---
-import Welcome from "../components/Welcome.astro";
+import { DashboardView } from "../components/views/DashboardView";
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="Generator fiszek AI - 10xdevsFishCards">
+  <DashboardView client:load />
 </Layout>
