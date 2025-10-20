@@ -141,7 +141,7 @@ export class DeckService {
    * @param params.limit - Items per page (max 100)
    * @param params.sortBy - Field to sort by
    * @param params.order - Sort order (asc/desc)
-   * @returns Paginated list of decks with metadata
+   * @returns Paginated list of decks with metadata including flashcard counts
    * @throws Error if database query fails
    */
   async listDecks(params: {
@@ -168,6 +168,43 @@ export class DeckService {
       throw new Error(`Failed to fetch decks: ${decksError.message}`);
     }
 
+    if (!decks || decks.length === 0) {
+      return {
+        data: [],
+        pagination: {
+          currentPage: page,
+          totalPages: 0,
+          totalItems: 0,
+        },
+      };
+    }
+
+    // Fetch flashcard counts for each deck in parallel
+    const flashcardCounts = await Promise.all(
+      decks.map(async (deck) => {
+        const { count, error: countError } = await this.supabase
+          .from("flashcards")
+          .select("*", { count: "exact", head: true })
+          .eq("deck_id", deck.id);
+
+        if (countError) {
+          console.error(`Failed to count flashcards for deck ${deck.id}:`, countError);
+          return 0;
+        }
+
+        return count ?? 0;
+      })
+    );
+
+    // Combine decks with their flashcard counts
+    const decksWithCounts: DeckSummaryDTO[] = decks.map((deck, index) => ({
+      id: deck.id,
+      name: deck.name,
+      created_at: deck.created_at,
+      last_reviewed_at: deck.last_reviewed_at,
+      flashcard_count: flashcardCounts[index],
+    }));
+
     // Fetch total count for pagination metadata
     const { count, error: countError } = await this.supabase.from("decks").select("*", { count: "exact", head: true });
 
@@ -179,13 +216,60 @@ export class DeckService {
     const totalPages = Math.ceil(totalItems / limit);
 
     return {
-      data: (decks as DeckSummaryDTO[]) ?? [],
+      data: decksWithCounts,
       pagination: {
         currentPage: page,
         totalPages,
         totalItems,
       },
     };
+  }
+
+  /**
+   * Updates a deck's name
+   * @param deckId - UUID of the deck to update
+   * @param name - New name for the deck
+   * @returns Updated deck information or null if not found
+   * @throws Error if database operation fails
+   */
+  async updateDeckName(deckId: string, name: string): Promise<{ id: string; name: string } | null> {
+    const { data, error } = await this.supabase
+      .from("decks")
+      .update({ name })
+      .eq("id", deckId)
+      .select("id, name")
+      .single();
+
+    if (error) {
+      // If error is 'PGRST116', it means no rows were affected (not found or no access)
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw new Error(`Failed to update deck: ${error.message}`);
+    }
+
+    return data;
+  }
+
+  /**
+   * Deletes a deck and all its associated flashcards
+   * @param deckId - UUID of the deck to delete
+   * @returns True if deletion was successful
+   * @throws Error if database operation fails
+   */
+  async deleteDeck(deckId: string): Promise<boolean> {
+    // Delete the deck (flashcards will be cascade deleted due to foreign key constraint)
+    const { error } = await this.supabase.from("decks").delete().eq("id", deckId);
+
+    if (error) {
+      // If error is 'PGRST116', it means no rows were affected (not found or no access)
+      if (error.code === "PGRST116") {
+        return false;
+      }
+      throw new Error(`Failed to delete deck: ${error.message}`);
+    }
+
+    return true;
   }
 
   /**

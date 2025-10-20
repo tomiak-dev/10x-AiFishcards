@@ -93,6 +93,4 @@ Ustawia domyślne parametry.
 7. Walidacja odpowiedzi:
    - Użycie AJV lub Zod do walidacji.
 8. Obsługa błędów w `_handleErrors` z mapowaniem do custom Error.
-10. Integracja w kodzie frontendu:
-    - Wywołanie metody `sendMessage` z odpowiednimi argumentami.
 

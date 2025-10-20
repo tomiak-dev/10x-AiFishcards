@@ -1,0 +1,16 @@
+---
+import { DeckDetailsViewWithProvider } from "../../components/views/DeckDetailsViewWithProvider";
+import Layout from "../../layouts/Layout.astro";
+
+// Get deckId from URL params
+const { deckId } = Astro.params;
+
+// Validate deckId
+if (!deckId) {
+  return Astro.redirect("/decks");
+}
+---
+
+<Layout title="Szczegóły talii - 10xdevsFishCards">
+  <DeckDetailsViewWithProvider deckId={deckId} client:load />
+</Layout>

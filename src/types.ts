@@ -93,7 +93,9 @@ export type PaginationDTO = {
 /**
  * Summary information for a deck (used in lists)
  */
-export type DeckSummaryDTO = Pick<Decks, "id" | "name" | "created_at" | "last_reviewed_at">;
+export type DeckSummaryDTO = Pick<Decks, "id" | "name" | "created_at" | "last_reviewed_at"> & {
+  flashcard_count: number;
+};
 
 /**
  * Basic flashcard information (used in deck details)

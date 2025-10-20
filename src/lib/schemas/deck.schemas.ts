@@ -20,6 +20,14 @@ export const CreateDeckSchema = z.object({
 });
 
 /**
+ * Schema for validating deck update request
+ * Used in: PATCH /api/decks/{deckId}
+ */
+export const UpdateDeckSchema = z.object({
+  name: z.string().min(1, "Deck name is required").max(100, "Deck name must not exceed 100 characters"),
+});
+
+/**
  * Schema for validating AI generation metrics
  */
 export const AiMetricsSchema = z.object({
@@ -67,6 +75,7 @@ export const ListDecksQuerySchema = z.object({
 export const DeckIdSchema = z.string().uuid("Deck ID must be a valid UUID");
 
 export type CreateDeckDTO = z.infer<typeof CreateDeckSchema>;
+export type UpdateDeckDTO = z.infer<typeof UpdateDeckSchema>;
 export type FlashcardInputDTO = z.infer<typeof FlashcardInputSchema>;
 export type AiSaveRequestDTO = z.infer<typeof AiSaveRequestSchema>;
 export type AiMetricsDTO = z.infer<typeof AiMetricsSchema>;
