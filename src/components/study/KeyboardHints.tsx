@@ -11,13 +11,13 @@ export const KeyboardHints = ({ isRevealed }: KeyboardHintsProps) => {
       <p className="text-xs text-gray-500 text-center">
         Skróty klawiszowe:{" "}
         {isRevealed ? (
-            <span>
+          <span>
             <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs">1</kbd> - Nie wiem,{" "}
-                <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs">2</kbd> - Wiem,{" "}
-                <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs">3</kbd> - Bardzo łatwe
+            <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs">2</kbd> - Wiem,{" "}
+            <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs">3</kbd> - Bardzo łatwe
           </span>
         ) : (
-            <span>
+          <span>
             <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs">Spacja</kbd> - odwróć fiszkę
           </span>
         )}
