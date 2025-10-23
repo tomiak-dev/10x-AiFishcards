@@ -112,3 +112,67 @@ export async function submitReview(
     new_interval: srsData.interval,
   };
 }
+
+/**
+ * Resets the learning progress for all flashcards in a deck
+ * Sets due_date to current date and resets SRS data to initial values
+ * TODO: Remove in production - testing only
+ * @param supabase - Supabase client instance
+ * @param userId - ID of the authenticated user
+ * @param deckId - UUID of the deck to reset
+ * @throws Error if deck not found or user doesn't have access
+ */
+export async function resetDeckProgress(
+  supabase: SupabaseClient,
+  userId: string,
+  deckId: string
+): Promise<void> {
+  // 1. Verify deck ownership
+  const { data: deckData, error: deckError } = await supabase
+    .from("decks")
+    .select("id")
+    .eq("id", deckId)
+    .eq("user_id", userId)
+    .single();
+
+  if (deckError || !deckData) {
+    throw new Error("Deck not found");
+  }
+
+  // 2. Get current date in YYYY-MM-DD format
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  // 3. Get all flashcard IDs from this deck
+  const { data: flashcards, error: flashcardsError } = await supabase
+    .from("flashcards")
+    .select("id")
+    .eq("deck_id", deckId);
+
+  if (flashcardsError) {
+    console.error("Error fetching flashcards:", flashcardsError);
+    throw new Error("Failed to fetch flashcards");
+  }
+
+  if (!flashcards || flashcards.length === 0) {
+    // No flashcards to reset - this is fine
+    return;
+  }
+
+  // 4. Reset SRS data for all flashcards
+  const flashcardIds = flashcards.map((f) => f.id);
+
+  const { error: updateError } = await supabase
+    .from("flashcard_srs_data")
+    .update({
+      due_date: currentDate,
+      interval: 1,
+      efactor: 2.5,
+      repetition: 0,
+    })
+    .in("flashcard_id", flashcardIds);
+
+  if (updateError) {
+    console.error("Error resetting SRS data:", updateError);
+    throw new Error("Failed to reset deck progress");
+  }
+}

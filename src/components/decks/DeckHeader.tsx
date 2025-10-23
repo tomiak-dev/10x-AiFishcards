@@ -57,6 +57,36 @@ export const DeckHeader = ({
     }
   };
 
+  // TODO: Remove in production - testing only
+  const handleResetProgress = async () => {
+    const confirmed = window.confirm(
+      "Czy na pewno chcesz zresetować postęp nauki dla tej talii? Wszystkie fiszki będą dostępne do nauki od nowa."
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(`/api/decks/${deckId}/reset-progress`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to reset progress");
+      }
+
+      // Also clear sessionStorage
+      sessionStorage.removeItem(`study_session_state_${deckId}`);
+
+      alert("Postęp został zresetowany! Możesz teraz rozpocząć naukę od nowa.");
+
+      // Reload page to reflect changes
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to reset progress:", error);
+      alert("Nie udało się zresetować postępu. Spróbuj ponownie.");
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -95,6 +125,10 @@ export const DeckHeader = ({
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button asChild variant="default" className="w-full sm:w-auto">
             <a href={`/decks/${deckId}/study`}>Rozpocznij naukę</a>
+          </Button>
+          {/* TODO: Remove in production - testing only */}
+          <Button onClick={handleResetProgress} variant="ghost" size="sm" className="w-full sm:w-auto">
+            🔄 Resetuj postęp (test)
           </Button>
           <Button asChild variant="outline" className="w-full sm:w-auto">
             <a href="/decks">Powrót do listy</a>
