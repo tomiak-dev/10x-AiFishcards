@@ -12,7 +12,7 @@ interface KeyboardShortcutsConfig {
  * Custom hook for handling keyboard shortcuts in study session
  *
  * Shortcuts:
- * - Space/Enter: Reveal answer (when not revealed)
+ * - Space: Reveal answer (when not revealed)
  * - 1: Rate as "again" (when revealed)
  * - 2: Rate as "good" (when revealed)
  * - 3: Rate as "easy" (when revealed)
@@ -35,12 +35,12 @@ export const useKeyboardShortcuts = ({
       }
 
       // Prevent default for shortcuts
-      if (event.key === " " || event.key === "Enter" || event.key === "1" || event.key === "2" || event.key === "3") {
+      if (event.key === " " || event.key === "1" || event.key === "2" || event.key === "3") {
         event.preventDefault();
       }
 
-      // Handle reveal shortcuts
-      if ((event.key === " " || event.key === "Enter") && onReveal) {
+      // Handle reveal shortcut
+      if (event.key === " " && onReveal) {
         onReveal();
         return;
       }

@@ -159,7 +159,7 @@ export const StudyView = ({ deckId, deckName }: StudyViewProps) => {
           />
 
           <div className="mb-8">
-            <FlashcardView flashcard={currentFlashcard} isRevealed={state.isRevealed} />
+            <FlashcardView flashcard={currentFlashcard} isRevealed={state.isRevealed} onFlip={handleReveal} />
           </div>
 
           <StudyControls

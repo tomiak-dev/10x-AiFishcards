@@ -122,11 +122,7 @@ export async function submitReview(
  * @param deckId - UUID of the deck to reset
  * @throws Error if deck not found or user doesn't have access
  */
-export async function resetDeckProgress(
-  supabase: SupabaseClient,
-  userId: string,
-  deckId: string
-): Promise<void> {
+export async function resetDeckProgress(supabase: SupabaseClient, userId: string, deckId: string): Promise<void> {
   // 1. Verify deck ownership
   const { data: deckData, error: deckError } = await supabase
     .from("decks")

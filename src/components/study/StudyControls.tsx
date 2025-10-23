@@ -9,17 +9,13 @@ interface StudyControlsProps {
 }
 
 /**
- * Control buttons for study session - reveal answer or rate flashcard
+ * Control buttons for study session - rate flashcard
+ * No reveal button - flashcard is clickable to flip
  */
 export const StudyControls = ({ isRevealed, onReveal, onRate, isSubmitting }: StudyControlsProps) => {
+  // Don't show any controls until flashcard is revealed
   if (!isRevealed) {
-    return (
-      <div className="flex justify-center mt-8">
-        <Button size="lg" onClick={onReveal} className="min-w-[200px]" aria-label="Pokaż odpowiedź">
-          Pokaż odpowiedź
-        </Button>
-      </div>
-    );
+    return null;
   }
 
   return (

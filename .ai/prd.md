@@ -118,6 +118,20 @@ Kryteria akceptacji:
 - W przypadku błędu sieci lub serwera wyświetlany jest komunikat z przyciskiem Powtórz
 - Po kliknięciu Powtórz następuje ponowna próba wywołania API
 
+### US-013
+Tytuł: Restart sesji nauki na danej talii
+Opis: Jako użytkownik chcę mieć możliwość zresetowania postępów nauki na danej talii, aby rozpocząć naukę od nowa.
+Kryteria akceptacji:
+- Użytkownik klika przycisk Resetuj postępy w widoku szczegółów talii
+- System ustawia wszystkie fiszki jako nieprzerobione i gotowe do nauki od początku
+
+### US-014
+Tytuł: Wyświetl czas następnej powtórki dla talii i fiszki
+Opis: Jako użytkownik chcę widzieć, kiedy mam zaplanowane kolejne powtórki dla każdej talii i fiszki.
+Kryteria akceptacji:
+- W widoku listy talii wyświetlany jest czas następnej powtórki
+- W widoku szczegółów talii każda fiszka pokazuje datę kolejnej powtórki
+
 ## 6. Metryki sukcesu
 - 75% fiszek wygenerowanych przez AI jest akceptowanych przez użytkowników w procesie recenzji
 - 75% wszystkich utworzonych fiszek pochodzi z generatora AI
