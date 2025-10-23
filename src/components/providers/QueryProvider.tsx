@@ -2,9 +2,9 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { createQueryClient } from "../../lib/react-query";
 import type { ReactNode } from "react";
 
-type QueryProviderProps = {
+interface QueryProviderProps {
   children: ReactNode;
-};
+}
 
 const queryClient = createQueryClient();
 

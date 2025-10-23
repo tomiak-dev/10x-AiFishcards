@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil, X, Check } from "lucide-react";
 
-type DeckHeaderProps = {
+interface DeckHeaderProps {
   deckName: string;
   deckId: string;
   flashcardCount: number;
   onUpdateName: (name: string) => void;
   onDeleteDeck: () => void;
   isUpdating: boolean;
-};
+}
 
 export const DeckHeader = ({
   deckName,

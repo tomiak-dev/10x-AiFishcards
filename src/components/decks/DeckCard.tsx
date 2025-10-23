@@ -2,10 +2,10 @@ import type { DeckSummaryDTO } from "../../types";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-type DeckCardProps = {
+interface DeckCardProps {
   deck: DeckSummaryDTO;
   onDelete: (deckId: string) => void;
-};
+}
 
 export const DeckCard = ({ deck, onDelete }: DeckCardProps) => {
   const createdDate = new Date(deck.created_at).toLocaleDateString("pl-PL");

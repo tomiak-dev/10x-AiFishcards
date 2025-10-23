@@ -1,9 +1,9 @@
 import { QueryProvider } from "../providers/QueryProvider";
 import { DeckDetailsView } from "./DeckDetailsView";
 
-type DeckDetailsViewWithProviderProps = {
+interface DeckDetailsViewWithProviderProps {
   deckId: string;
-};
+}
 
 /**
  * Wrapper component that combines QueryProvider with DeckDetailsView

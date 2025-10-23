@@ -7,12 +7,12 @@ import type {
   UpdateFlashcardCommand,
 } from "../../types";
 
-type UseDecksParams = {
+interface UseDecksParams {
   page?: number;
   limit?: number;
   sortBy?: "name" | "created_at" | "last_reviewed_at";
   order?: "asc" | "desc";
-};
+}
 
 /**
  * Fetches the list of decks from the API

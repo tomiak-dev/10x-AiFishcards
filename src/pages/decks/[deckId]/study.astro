@@ -1,0 +1,41 @@
+---
+import { StudyViewWithProvider } from "../../../components/study/StudyViewWithProvider";
+import Layout from "../../../layouts/Layout.astro";
+import type { DeckDetailsDTO } from "../../../types";
+
+export const prerender = false;
+
+// Get deckId from URL params
+const { deckId } = Astro.params;
+
+// Validate deckId
+if (!deckId) {
+  return Astro.redirect("/decks");
+}
+
+// Fetch deck details to get deck name
+let deckName = "";
+try {
+  const response = await fetch(`${Astro.url.origin}/api/decks/${deckId}`, {
+    headers: {
+      Authorization: Astro.request.headers.get("Authorization") || "",
+      Cookie: Astro.request.headers.get("Cookie") || "",
+    },
+  });
+
+  if (!response.ok) {
+    // If deck not found or unauthorized, redirect to decks list
+    return Astro.redirect("/decks");
+  }
+
+  const deck: DeckDetailsDTO = await response.json();
+  deckName = deck.name;
+} catch (error) {
+  console.error("Error fetching deck details:", error);
+  return Astro.redirect("/decks");
+}
+---
+
+<Layout title={`Sesja nauki - ${deckName} - 10xdevsFishCards`}>
+  <StudyViewWithProvider deckId={deckId} deckName={deckName} client:load />
+</Layout>

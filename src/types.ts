@@ -25,10 +25,10 @@ export type ReviewQualityEnum = Enums["review_quality_enum"];
  * Command for creating a new deck with initial flashcards
  * Used in: POST /api/decks
  */
-export type CreateDeckCommand = {
+export interface CreateDeckCommand {
   name: string;
-  flashcards: Array<Pick<Flashcards, "front" | "back">>;
-};
+  flashcards: Pick<Flashcards, "front" | "back">[];
+}
 
 /**
  * Command for updating a deck's name
@@ -52,30 +52,30 @@ export type UpdateFlashcardCommand = Pick<Flashcards, "front" | "back">;
  * Command for generating AI flashcard proposals from text
  * Used in: POST /api/ai/generate
  */
-export type GenerateFlashcardsCommand = {
+export interface GenerateFlashcardsCommand {
   text: string;
-};
+}
 
 /**
  * Command for saving AI-generated flashcards with metrics
  * Used in: POST /api/ai/save
  */
-export type SaveAIFlashcardsCommand = {
-  flashcards: Array<Pick<Flashcards, "front" | "back">>;
+export interface SaveAIFlashcardsCommand {
+  flashcards: Pick<Flashcards, "front" | "back">[];
   metrics: Pick<
     AiGenerationMetrics,
     "proposed_flashcards_count" | "accepted_flashcards_count" | "edited_flashcards_count"
   >;
-};
+}
 
 /**
  * Command for submitting a flashcard review with quality assessment
  * Used in: POST /api/reviews
  */
-export type SubmitReviewCommand = {
+export interface SubmitReviewCommand {
   flashcard_id: string;
   quality: ReviewQualityEnum;
-};
+}
 
 // ============================================================================
 // Response DTOs - Common/Shared
@@ -84,11 +84,11 @@ export type SubmitReviewCommand = {
 /**
  * Pagination metadata for paginated responses
  */
-export type PaginationDTO = {
+export interface PaginationDTO {
   currentPage: number;
   totalPages: number;
   totalItems: number;
-};
+}
 
 /**
  * Summary information for a deck (used in lists)
@@ -110,11 +110,11 @@ export type ReviewFlashcardDTO = Pick<Flashcards, "id" | "front" | "back">;
 /**
  * AI-generated flashcard proposal with temporary ID
  */
-export type FlashcardProposalDTO = {
+export interface FlashcardProposalDTO {
   id: string; // Temporary client-side ID
   front: string;
   back: string;
-};
+}
 
 // ============================================================================
 // Response DTOs - Decks
@@ -124,10 +124,10 @@ export type FlashcardProposalDTO = {
  * Response for listing decks with pagination
  * Used in: GET /api/decks
  */
-export type ListDecksResponse = {
+export interface ListDecksResponse {
   data: DeckSummaryDTO[];
   pagination: PaginationDTO;
-};
+}
 
 /**
  * Response for getting detailed deck information with all flashcards
@@ -173,9 +173,9 @@ export type FlashcardUpdatedDTO = Pick<Flashcards, "id" | "front" | "back" | "ch
  * Response with AI-generated flashcard proposals
  * Used in: POST /api/ai/generate
  */
-export type FlashcardProposalsDTO = {
+export interface FlashcardProposalsDTO {
   proposals: FlashcardProposalDTO[];
-};
+}
 
 /**
  * Response after saving AI-generated flashcards to a new deck
@@ -191,16 +191,41 @@ export type AISaveResponseDTO = Pick<Decks, "id" | "name" | "created_at">;
  * Response with flashcards due for review
  * Used in: GET /api/decks/{deckId}/review
  */
-export type ReviewFlashcardsDTO = {
+export interface ReviewFlashcardsDTO {
   flashcards: ReviewFlashcardDTO[];
-};
+}
 
 /**
  * Response after submitting a flashcard review
  * Used in: POST /api/reviews
  */
-export type ReviewResponseDTO = {
+export interface ReviewResponseDTO {
   flashcard_id: string;
   next_due_date: string; // From flashcard_srs_data.due_date (date string)
   new_interval: number; // From flashcard_srs_data.interval (days)
-};
+}
+
+// ============================================================================
+// Study Session View Models
+// ============================================================================
+
+/**
+ * Represents the state of a study session on the client side
+ */
+export interface StudySessionState {
+  status: "loading" | "ready" | "error" | "empty" | "finished";
+  flashcards: ReviewFlashcardDTO[];
+  currentCardIndex: number;
+  isRevealed: boolean;
+  stats: SessionStats;
+}
+
+/**
+ * Statistics of a completed study session
+ */
+export interface SessionStats {
+  total: number;
+  again: number;
+  good: number;
+  easy: number;
+}

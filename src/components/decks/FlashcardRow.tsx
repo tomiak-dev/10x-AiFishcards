@@ -3,13 +3,13 @@ import type { FlashcardDTO } from "../../types";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
-type FlashcardRowProps = {
+interface FlashcardRowProps {
   flashcard: FlashcardDTO;
   onEdit: (id: string, front: string, back: string) => void;
   onDelete: (id: string) => void;
   isEditing: boolean;
   isDeleting: boolean;
-};
+}
 
 export const FlashcardRow = ({ flashcard, onEdit, onDelete, isEditing, isDeleting }: FlashcardRowProps) => {
   const [editMode, setEditMode] = useState(false);

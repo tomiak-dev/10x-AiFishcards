@@ -4,14 +4,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
-type FlashcardsListProps = {
+interface FlashcardsListProps {
   flashcards: FlashcardDTO[];
   isLoading: boolean;
   onEdit: (id: string, front: string, back: string) => void;
   onDelete: (id: string) => void;
   editingId?: string;
   deletingId?: string;
-};
+}
 
 export const FlashcardsList = ({
   flashcards,

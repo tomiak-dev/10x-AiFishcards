@@ -14,9 +14,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
-type DeckDetailsViewProps = {
+interface DeckDetailsViewProps {
   deckId: string;
-};
+}
 
 /**
  * Main view component for the deck details page

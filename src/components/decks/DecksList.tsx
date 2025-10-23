@@ -2,11 +2,11 @@ import type { DeckSummaryDTO } from "../../types";
 import { DeckCard } from "./DeckCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type DecksListProps = {
+interface DecksListProps {
   decks: DeckSummaryDTO[];
   isLoading: boolean;
   onDelete: (deckId: string) => void;
-};
+}
 
 export const DecksList = ({ decks, isLoading, onDelete }: DecksListProps) => {
   if (isLoading) {

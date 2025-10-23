@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-type AddFlashcardFormProps = {
+interface AddFlashcardFormProps {
   onAdd: (front: string, back: string) => void;
   isAdding: boolean;
-};
+}
 
 export const AddFlashcardForm = ({ onAdd, isAdding }: AddFlashcardFormProps) => {
   const [front, setFront] = useState("");
