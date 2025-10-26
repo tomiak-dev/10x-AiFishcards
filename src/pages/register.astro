@@ -1,0 +1,23 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../components/ui/card";
+import { RegisterForm } from "../components/auth/RegisterForm";
+
+export const prerender = false;
+---
+
+<Layout title="Rejestracja - 10xdevsFishcards">
+  <main class="min-h-screen flex items-center justify-center p-4 bg-muted/30">
+    <div class="w-full max-w-md">
+      <Card>
+        <CardHeader>
+          <CardTitle>Rejestracja</CardTitle>
+          <CardDescription> Utwórz konto, aby zacząć korzystać z fiszek </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <RegisterForm client:load />
+        </CardContent>
+      </Card>
+    </div>
+  </main>
+</Layout>

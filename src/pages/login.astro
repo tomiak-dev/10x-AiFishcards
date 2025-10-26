@@ -1,0 +1,23 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../components/ui/card";
+import { LoginForm } from "../components/auth/LoginForm";
+
+export const prerender = false;
+---
+
+<Layout title="Logowanie - 10xdevsFishcards">
+  <main class="min-h-screen flex items-center justify-center p-4 bg-muted/30">
+    <div class="w-full max-w-md">
+      <Card>
+        <CardHeader>
+          <CardTitle>Logowanie</CardTitle>
+          <CardDescription> Zaloguj się do swojego konta, aby kontynuować </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <LoginForm client:load />
+        </CardContent>
+      </Card>
+    </div>
+  </main>
+</Layout>

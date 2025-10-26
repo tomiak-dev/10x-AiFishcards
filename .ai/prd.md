@@ -132,6 +132,14 @@ Kryteria akceptacji:
 - W widoku listy talii wyświetlany jest czas następnej powtórki
 - W widoku szczegółów talii każda fiszka pokazuje datę kolejnej powtórki
 
+### US-015
+Tytuł: Odzyskiwanie i zmiana hasła
+Opis: Jako użytkownik chcę móc odzyskać zapomniane hasło.
+Kryteria akceptacji:
+- Użytkownik klika "Zapomniałem hasła", podaje e-mail i otrzymuje link do resetu
+- Po kliknięciu linku użytkownik może ustawić nowe hasło i zalogować się na konto
+- System wyświetla komunikaty o sukcesie lub błędach podczas procesu odzyskiwania hasła
+
 ## 6. Metryki sukcesu
 - 75% fiszek wygenerowanych przez AI jest akceptowanych przez użytkowników w procesie recenzji
 - 75% wszystkich utworzonych fiszek pochodzi z generatora AI
