@@ -6,6 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { LogoutButton } from "../auth/LogoutButton";
 
 /**
  * Main view component for the decks list page
@@ -74,9 +75,12 @@ export function DecksView() {
           <h1 className="text-4xl font-bold">Moje talie</h1>
           <p className="text-muted-foreground">Zarządzaj swoimi taliami fiszek</p>
         </div>
-        <Button asChild>
-          <a href="/">Utwórz nową talię</a>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild>
+            <a href="/">Utwórz nową talię</a>
+          </Button>
+          <LogoutButton variant="ghost" />
+        </div>
       </div>
 
       {/* Decks list or empty state */}

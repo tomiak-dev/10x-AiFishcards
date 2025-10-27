@@ -5,6 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, Loader2 } from "lucide-react";
+import { LogoutButton } from "../auth/LogoutButton";
 import type { FlashcardProposal, GeneratorStatus, ApiError } from "../dashboard/types";
 import type {
   GenerateFlashcardsCommand,
@@ -153,9 +154,17 @@ export function DashboardView() {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl space-y-8">
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold">Generator fiszek AI</h1>
-        <p className="text-muted-foreground">Wklej tekst, a AI wygeneruje dla Ciebie propozycje fiszek do nauki</p>
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold">Generator fiszek AI</h1>
+          <p className="text-muted-foreground">Wklej tekst, a AI wygeneruje dla Ciebie propozycje fiszek do nauki</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" asChild>
+            <a href="/decks">Moje talie</a>
+          </Button>
+          <LogoutButton variant="ghost" />
+        </div>
       </div>
 
       {/* Error state */}

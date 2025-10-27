@@ -9,7 +9,7 @@ declare global {
         id: string;
         email: string;
       };
-    supabase: SupabaseClient<Database>;
+      supabase: SupabaseClient<Database>;
     }
   }
 }
