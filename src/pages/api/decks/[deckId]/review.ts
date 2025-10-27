@@ -3,6 +3,7 @@ import { getDeckReviewParamsSchema } from "../../../../lib/schemas/review-schema
 import { getFlashcardsForReview } from "../../../../lib/services/review-service";
 import type { ReviewFlashcardsDTO } from "../../../../types";
 import { ZodError } from "zod";
+import { createSupabaseServerInstance } from "../../../../db/supabase.client";
 
 export const prerender = false;
 
@@ -20,10 +21,10 @@ export const prerender = false;
  * - 404: Deck not found or user doesn't have access
  * - 500: Internal server error
  */
-export const GET: APIRoute = async ({ locals, params }) => {
+export const GET: APIRoute = async ({ locals, params, cookies, request }) => {
   try {
     // Check authentication
-    if (!locals.userId) {
+    if (!locals.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
@@ -64,7 +65,8 @@ export const GET: APIRoute = async ({ locals, params }) => {
     }
 
     // Fetch flashcards for review
-    const flashcards = await getFlashcardsForReview(locals.supabase, locals.userId, validated.deckId);
+    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
+    const flashcards = await getFlashcardsForReview(supabase, locals.user.id, validated.deckId);
 
     const response: ReviewFlashcardsDTO = { flashcards };
 

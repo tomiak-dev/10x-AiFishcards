@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { getDeckReviewParamsSchema } from "../../../../lib/schemas/review-schemas";
 import { resetDeckProgress } from "../../../../lib/services/review-service";
 import { ZodError } from "zod";
+import { createSupabaseServerInstance } from "../../../../db/supabase.client";
 
 export const prerender = false;
 
@@ -22,10 +23,10 @@ export const prerender = false;
  * - 404: Deck not found or user doesn't have access
  * - 500: Internal server error
  */
-export const POST: APIRoute = async ({ locals, params }) => {
+export const POST: APIRoute = async ({ locals, params, cookies, request }) => {
   try {
     // Check authentication
-    if (!locals.userId) {
+    if (!locals.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
@@ -66,7 +67,8 @@ export const POST: APIRoute = async ({ locals, params }) => {
     }
 
     // Reset deck progress
-    await resetDeckProgress(locals.supabase, locals.userId, validated.deckId);
+    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
+    await resetDeckProgress(supabase, locals.user.id, validated.deckId);
 
     return new Response(
       JSON.stringify({

@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { DeckService } from "../../../lib/services/deck-service";
 import { DeckIdSchema, UpdateDeckSchema } from "../../../lib/schemas/deck.schemas";
 import { ZodError } from "zod";
+import { createSupabaseServerInstance } from "../../../db/supabase.client";
 
 export const prerender = false;
 
@@ -19,10 +20,10 @@ export const prerender = false;
  * - 404: Deck not found or user doesn't have access
  * - 500: Internal server error
  */
-export const GET: APIRoute = async ({ locals, params }) => {
+export const GET: APIRoute = async ({ locals, params, cookies, request }) => {
   try {
     // Check authentication
-    if (!locals.userId) {
+    if (!locals.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
@@ -62,7 +63,8 @@ export const GET: APIRoute = async ({ locals, params }) => {
     }
 
     // Initialize service and fetch deck details
-    const deckService = new DeckService(locals.supabase);
+    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
+    const deckService = new DeckService(supabase);
     const deck = await deckService.getDeckDetails(deckId);
 
     // Check if deck was found
@@ -108,10 +110,10 @@ export const GET: APIRoute = async ({ locals, params }) => {
  * - 404: Deck not found or user doesn't have access
  * - 500: Internal server error
  */
-export const DELETE: APIRoute = async ({ locals, params }) => {
+export const DELETE: APIRoute = async ({ locals, params, cookies, request }) => {
   try {
     // Check authentication
-    if (!locals.userId) {
+    if (!locals.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
@@ -151,7 +153,8 @@ export const DELETE: APIRoute = async ({ locals, params }) => {
     }
 
     // Initialize service and delete deck
-    const deckService = new DeckService(locals.supabase);
+    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
+    const deckService = new DeckService(supabase);
     const deleted = await deckService.deleteDeck(deckId);
 
     // Check if deck was found and deleted
@@ -199,10 +202,10 @@ export const DELETE: APIRoute = async ({ locals, params }) => {
  * - 404: Deck not found or user doesn't have access
  * - 500: Internal server error
  */
-export const PATCH: APIRoute = async ({ locals, params, request }) => {
+export const PATCH: APIRoute = async ({ locals, params, request, cookies }) => {
   try {
     // Check authentication
-    if (!locals.userId) {
+    if (!locals.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
@@ -275,7 +278,8 @@ export const PATCH: APIRoute = async ({ locals, params, request }) => {
     }
 
     // Initialize service and update deck
-    const deckService = new DeckService(locals.supabase);
+    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
+    const deckService = new DeckService(supabase);
     const updatedDeck = await deckService.updateDeckName(deckId, validatedData.name);
 
     // Check if deck was found and updated

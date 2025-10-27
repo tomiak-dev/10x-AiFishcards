@@ -21,20 +21,31 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     setIsLoading(true);
 
     try {
-      // TODO: Implement Supabase authentication
-      // const { data, error } = await supabase.auth.signInWithPassword({
-      //   email,
-      //   password,
-      // });
+      // Call server-side login API
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-      // if (error) throw error;
+      const data = await response.json();
 
-      // On success, redirect to dashboard
-      // window.location.href = '/dashboard';
+      if (!response.ok) {
+        throw new Error(data.error || "Wystąpił błąd podczas logowania");
+      }
 
+      // Call onSuccess callback if provided
       if (onSuccess) {
         onSuccess();
       }
+
+      // Redirect to dashboard with full page reload to ensure session is loaded
+      window.location.href = "/dashboard";
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd podczas logowania");
     } finally {

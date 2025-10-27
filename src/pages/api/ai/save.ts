@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { AiSaveRequestSchema } from "../../../lib/schemas/deck.schemas";
 import { DeckService } from "../../../lib/services/deck-service";
 import type { SaveAIFlashcardsCommand } from "../../../types";
+import { createSupabaseServerInstance } from "../../../db/supabase.client";
 
 export const prerender = false;
 
@@ -26,10 +27,10 @@ export const prerender = false;
  *   "created_at": "iso-8601-timestamp"
  * }
  */
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, locals, cookies }) => {
   try {
-    // Check authentication - userId is set by middleware
-    if (!locals.userId) {
+    // Check authentication
+    if (!locals.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
@@ -40,7 +41,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     let body;
     try {
       body = await request.json();
-    } catch (error) {
+    } catch {
       return new Response(JSON.stringify({ error: "Invalid JSON in request body" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -70,8 +71,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     };
 
     // Call service to create deck from AI proposals
-    const deckService = new DeckService(locals.supabase);
-    const createdDeck = await deckService.createDeckFromAiProposals(command, locals.userId);
+    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
+    const deckService = new DeckService(supabase);
+    const createdDeck = await deckService.createDeckFromAiProposals(command, locals.user.id);
 
     // Return success response
     return new Response(JSON.stringify(createdDeck), {

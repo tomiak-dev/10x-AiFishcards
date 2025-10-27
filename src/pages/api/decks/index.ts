@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { DeckService } from "../../../lib/services/deck-service";
 import { ListDecksQuerySchema } from "../../../lib/schemas/deck.schemas";
 import { ZodError } from "zod";
+import { createSupabaseServerInstance } from "../../../db/supabase.client";
 
 export const prerender = false;
 
@@ -15,10 +16,10 @@ export const prerender = false;
  * - sortBy: Field to sort by (default: "created_at")
  * - order: Sort order "asc" or "desc" (default: "desc")
  */
-export const GET: APIRoute = async ({ locals, url }) => {
+export const GET: APIRoute = async ({ locals, url, cookies, request }) => {
   try {
     // Check authentication
-    if (!locals.userId) {
+    if (!locals.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
@@ -53,7 +54,8 @@ export const GET: APIRoute = async ({ locals, url }) => {
     }
 
     // Initialize service and fetch decks
-    const deckService = new DeckService(locals.supabase);
+    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
+    const deckService = new DeckService(supabase);
     const response = await deckService.listDecks(validatedParams);
 
     return new Response(JSON.stringify(response), {

@@ -1,37 +1,55 @@
 import { defineMiddleware } from "astro:middleware";
 
-import { supabaseClient, DEFAULT_USER_UUID } from "../db/supabase.client.ts";
+import { createSupabaseServerInstance } from "../db/supabase.client.ts";
+
+// Public paths that don't require authentication
+const PUBLIC_PATHS = [
+  // Auth pages
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  // Auth API endpoints
+  "/api/auth/login",
+  "/api/auth/register",
+  "/api/auth/logout",
+  "/api/auth/reset-password",
+];
+
+// Paths that redirect authenticated users to dashboard
+const AUTH_PAGES = ["/login", "/register", "/forgot-password", "/reset-password"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  context.locals.supabase = supabaseClient;
+  const supabase = createSupabaseServerInstance({
+    cookies: context.cookies,
+    headers: context.request.headers,
+  });
 
-  // For API routes, check authentication
-  if (context.url.pathname.startsWith("/api/")) {
-    const authHeader = context.request.headers.get("Authorization");
+  // IMPORTANT: Always get user session first before any other operations
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    if (authHeader?.startsWith("Bearer ")) {
-      const token = authHeader.substring(7);
+  // Set user in locals if authenticated
+  if (user?.email) {
+    context.locals.user = {
+      id: user.id,
+      email: user.email,
+    };
+  }
 
-      try {
-        const {
-          data: { user },
-          error,
-        } = await supabaseClient.auth.getUser(token);
+  const pathname = context.url.pathname;
+  const isPublicPath = PUBLIC_PATHS.includes(pathname);
+  const isAuthPage = AUTH_PAGES.includes(pathname);
 
-        if (!error && user) {
-          context.locals.userId = user.id;
-        }
-      } catch (error) {
-        console.error("Error verifying token:", error);
-      }
-    }
+  // Redirect authenticated users away from auth pages to dashboard
+  if (user && isAuthPage) {
+    return context.redirect("/dashboard");
+  }
 
-    // DEVELOPMENT ONLY: Fallback to default test user UUID when no valid token is provided
-    // This allows testing API endpoints without authentication during development
-    // TODO: Remove or disable this in production environment
-    if (!context.locals.userId) {
-      context.locals.userId = DEFAULT_USER_UUID;
-    }
+  // Redirect unauthenticated users from protected pages to login
+  if (!user && !isPublicPath) {
+    return context.redirect("/login");
   }
 
   return next();

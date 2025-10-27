@@ -1,7 +1,8 @@
 import type { APIRoute } from "astro";
-import { FlashcardService } from "../../../lib/services/flashcard-service";
-import { FlashcardIdSchema, UpdateFlashcardSchema } from "../../../lib/schemas/flashcard.schemas";
+import { FlashcardService } from "@/lib/services/flashcard-service.ts";
+import { FlashcardIdSchema, UpdateFlashcardSchema } from "@/lib/schemas/flashcard.schemas.ts";
 import { ZodError } from "zod";
+import { createSupabaseServerInstance } from "@/db/supabase.client.ts";
 
 export const prerender = false;
 
@@ -23,10 +24,10 @@ export const prerender = false;
  * - 404: Flashcard not found or user doesn't have access
  * - 500: Internal server error
  */
-export const PATCH: APIRoute = async ({ locals, params, request }) => {
+export const PATCH: APIRoute = async ({ locals, params, request, cookies }) => {
   try {
     // Check authentication
-    if (!locals.userId) {
+    if (!locals.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
@@ -99,7 +100,8 @@ export const PATCH: APIRoute = async ({ locals, params, request }) => {
     }
 
     // Update flashcard
-    const flashcardService = new FlashcardService(locals.supabase);
+    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
+    const flashcardService = new FlashcardService(supabase);
     const updatedFlashcard = await flashcardService.updateFlashcard(flashcardId, validatedData);
 
     // Check if flashcard was found and updated
@@ -145,10 +147,10 @@ export const PATCH: APIRoute = async ({ locals, params, request }) => {
  * - 404: Flashcard not found or user doesn't have access
  * - 500: Internal server error
  */
-export const DELETE: APIRoute = async ({ locals, params }) => {
+export const DELETE: APIRoute = async ({ locals, params, cookies, request }) => {
   try {
     // Check authentication
-    if (!locals.userId) {
+    if (!locals.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
@@ -188,7 +190,8 @@ export const DELETE: APIRoute = async ({ locals, params }) => {
     }
 
     // Delete flashcard
-    const flashcardService = new FlashcardService(locals.supabase);
+    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
+    const flashcardService = new FlashcardService(supabase);
     const deleted = await flashcardService.deleteFlashcard(flashcardId);
 
     // Check if flashcard was found and deleted

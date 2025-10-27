@@ -4,6 +4,7 @@ import { FlashcardService } from "../../../../lib/services/flashcard-service";
 import { DeckIdSchema } from "../../../../lib/schemas/deck.schemas";
 import { AddFlashcardSchema } from "../../../../lib/schemas/flashcard.schemas";
 import { ZodError } from "zod";
+import { createSupabaseServerInstance } from "../../../../db/supabase.client";
 
 export const prerender = false;
 
@@ -25,10 +26,10 @@ export const prerender = false;
  * - 404: Deck not found or user doesn't have access
  * - 500: Internal server error
  */
-export const POST: APIRoute = async ({ locals, params, request }) => {
+export const POST: APIRoute = async ({ locals, params, request, cookies }) => {
   try {
     // Check authentication
-    if (!locals.userId) {
+    if (!locals.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
@@ -68,7 +69,8 @@ export const POST: APIRoute = async ({ locals, params, request }) => {
     }
 
     // Verify deck exists and user has access
-    const deckService = new DeckService(locals.supabase);
+    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
+    const deckService = new DeckService(supabase);
     const deck = await deckService.getDeckDetails(deckId);
 
     if (!deck) {
@@ -115,7 +117,7 @@ export const POST: APIRoute = async ({ locals, params, request }) => {
     }
 
     // Add flashcard to deck
-    const flashcardService = new FlashcardService(locals.supabase);
+    const flashcardService = new FlashcardService(supabase);
     const newFlashcard = await flashcardService.addFlashcard(deckId, validatedData);
 
     // Return created flashcard

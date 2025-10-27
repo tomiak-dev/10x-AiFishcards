@@ -13,10 +13,8 @@ const AiGenerateRequestSchema = z.object({
 });
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  // Authentication check - userId should be set by middleware
-  const userId = locals.userId;
-
-  if (!userId) {
+  // Authentication check
+  if (!locals.user) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
@@ -49,7 +47,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   // Call AI service to generate flashcards
   try {
-    const proposals = await generateFlashcards(text, userId);
+    const proposals = await generateFlashcards(text, locals.user.id);
 
     return new Response(JSON.stringify({ proposals }), {
       status: 200,
