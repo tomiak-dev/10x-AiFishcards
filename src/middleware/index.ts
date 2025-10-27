@@ -20,7 +20,8 @@ const PUBLIC_PATHS = [
 const AUTH_PAGES = ["/login", "/register", "/forgot-password", "/reset-password"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  const supabase = createSupabaseServerInstance({
+  // Create Supabase instance and store in locals for reuse in endpoints
+  context.locals.supabase = createSupabaseServerInstance({
     cookies: context.cookies,
     headers: context.request.headers,
   });
@@ -28,7 +29,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // IMPORTANT: Always get user session first before any other operations
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await context.locals.supabase.auth.getUser();
 
   // Set user in locals if authenticated
   if (user?.email) {

@@ -3,7 +3,6 @@ import { submitReviewSchema } from "../../lib/schemas/review-schemas";
 import { submitReview } from "../../lib/services/review-service";
 import type { SubmitReviewCommand, ReviewResponseDTO } from "../../types";
 import { ZodError } from "zod";
-import { createSupabaseServerInstance } from "../../db/supabase.client";
 
 export const prerender = false;
 
@@ -31,7 +30,7 @@ export const prerender = false;
  * - 404: Flashcard not found or user doesn't have access
  * - 500: Internal server error
  */
-export const POST: APIRoute = async ({ request, locals, cookies }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     // Check authentication
     if (!locals.user) {
@@ -76,9 +75,8 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     }
 
     // Submit review
-    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
     const result: ReviewResponseDTO = await submitReview(
-      supabase,
+      locals.supabase,
       locals.user.id,
       validated.flashcard_id,
       validated.quality

@@ -2,7 +2,6 @@ import type { APIRoute } from "astro";
 import { AiSaveRequestSchema } from "../../../lib/schemas/deck.schemas";
 import { DeckService } from "../../../lib/services/deck-service";
 import type { SaveAIFlashcardsCommand } from "../../../types";
-import { createSupabaseServerInstance } from "../../../db/supabase.client";
 
 export const prerender = false;
 
@@ -27,7 +26,7 @@ export const prerender = false;
  *   "created_at": "iso-8601-timestamp"
  * }
  */
-export const POST: APIRoute = async ({ request, locals, cookies }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     // Check authentication
     if (!locals.user) {
@@ -71,8 +70,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     };
 
     // Call service to create deck from AI proposals
-    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
-    const deckService = new DeckService(supabase);
+    const deckService = new DeckService(locals.supabase);
     const createdDeck = await deckService.createDeckFromAiProposals(command, locals.user.id);
 
     // Return success response

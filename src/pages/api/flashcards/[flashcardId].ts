@@ -2,7 +2,6 @@ import type { APIRoute } from "astro";
 import { FlashcardService } from "@/lib/services/flashcard-service.ts";
 import { FlashcardIdSchema, UpdateFlashcardSchema } from "@/lib/schemas/flashcard.schemas.ts";
 import { ZodError } from "zod";
-import { createSupabaseServerInstance } from "@/db/supabase.client.ts";
 
 export const prerender = false;
 
@@ -24,7 +23,7 @@ export const prerender = false;
  * - 404: Flashcard not found or user doesn't have access
  * - 500: Internal server error
  */
-export const PATCH: APIRoute = async ({ locals, params, request, cookies }) => {
+export const PATCH: APIRoute = async ({ locals, params, request }) => {
   try {
     // Check authentication
     if (!locals.user) {
@@ -100,8 +99,7 @@ export const PATCH: APIRoute = async ({ locals, params, request, cookies }) => {
     }
 
     // Update flashcard
-    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
-    const flashcardService = new FlashcardService(supabase);
+    const flashcardService = new FlashcardService(locals.supabase);
     const updatedFlashcard = await flashcardService.updateFlashcard(flashcardId, validatedData);
 
     // Check if flashcard was found and updated
@@ -147,7 +145,7 @@ export const PATCH: APIRoute = async ({ locals, params, request, cookies }) => {
  * - 404: Flashcard not found or user doesn't have access
  * - 500: Internal server error
  */
-export const DELETE: APIRoute = async ({ locals, params, cookies, request }) => {
+export const DELETE: APIRoute = async ({ locals, params }) => {
   try {
     // Check authentication
     if (!locals.user) {
@@ -190,8 +188,7 @@ export const DELETE: APIRoute = async ({ locals, params, cookies, request }) => 
     }
 
     // Delete flashcard
-    const supabase = createSupabaseServerInstance({ cookies, headers: request.headers });
-    const flashcardService = new FlashcardService(supabase);
+    const flashcardService = new FlashcardService(locals.supabase);
     const deleted = await flashcardService.deleteFlashcard(flashcardId);
 
     // Check if flashcard was found and deleted
